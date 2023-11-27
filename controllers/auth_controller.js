@@ -9,19 +9,19 @@ const nodemailer = require("nodemailer");
 const parseISO = require("date-fns/parseISO");
 const format = require("date-fns/format");
 
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+    user: process.env.EMAIL_SMTP,
+    pass: process.env.PASS_SMTP,
+  },
+});
+
 async function register(req, res, next) {
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        // TODO: replace `user` and `pass` values from <https://forwardemail.net>
-        user: process.env.EMAIL_SMTP,
-        pass: process.env.PASS_SMTP,
-      },
-    });
-
     let { name, email, password, age, birthdate } = req.body;
     const formattedDate = new Date(parseISO(birthdate));
     formattedDate.setDate(formattedDate.getDate() + 1);
@@ -63,7 +63,7 @@ async function register(req, res, next) {
     const mailOptions = await transporter.sendMail({
       from: process.env.EMAIL_SMTP, // sender address
       to: email, // list of receivers
-      subject: "Hello ✔", // Subject line
+      subject: "Verification Email", // Subject line
       text: "Hello world?", // plain text body
       html: `<a href="${verificationLink}">Verify your email</a>`, // html body
     });
@@ -179,16 +179,6 @@ async function forgotPassword(req, res, next) {
       res.json(resp);
       return;
     }
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        // TODO: replace `user` and `pass` values from <https://forwardemail.net>
-        user: process.env.EMAIL_SMTP,
-        pass: process.env.PASS_SMTP,
-      },
-    });
 
     // Generate token untuk reset password
     const resetToken = jwt.sign(
