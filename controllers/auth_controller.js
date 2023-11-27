@@ -155,4 +155,103 @@ async function verify(req, res, next) {
   }
 }
 
-module.exports = { register, authUser, verify };
+async function forgotPassword(req, res, next) {
+  const { email } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      let resp = ResponseTemplate(null, "User not found", null, 404);
+      res.json(resp);
+      return;
+    } else if (!user.is_verified) {
+      let resp = ResponseTemplate(
+        null,
+        "Please verify your email first",
+        null,
+        401
+      );
+      res.json(resp);
+      return;
+    }
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+        user: process.env.EMAIL_SMTP,
+        pass: process.env.PASS_SMTP,
+      },
+    });
+
+    // Generate token untuk reset password
+    const resetToken = jwt.sign(
+      { id: user.id, email: user.email, action: "reset-password" },
+      process.env.SECRET_KEY,
+      { expiresIn: "1h" } // Token reset password berlaku selama 1 jam
+    );
+
+    // Kirim email reset password
+    const resetLink = `http://localhost:8080/auth/resetPassword?token=${resetToken}`;
+    const mailOptions = {
+      from: process.env.EMAIL_SMTP,
+      to: email,
+      subject: "Reset Password",
+      html: `<p>To reset your password, click on the following link:</p><a href="${resetLink}">${resetLink}</a>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    let resp = ResponseTemplate(
+      null,
+      "Password reset instructions sent to your email",
+      null,
+      200
+    );
+    res.json(resp);
+    return;
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function resetPassword(req, res, next) {
+  const { newPassword } = req.body;
+  const token = req.query.token;
+
+  try {
+    // Verifikasi token reset password
+    const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
+
+    // Cek apakah token sesuai dengan aksi reset password
+    if (decodedToken.action !== "reset-password") {
+      let resp = ResponseTemplate(null, "Invalid token", null, 401);
+      res.json(resp);
+      return;
+    }
+
+    // Reset password
+    const encryptedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: decodedToken.id },
+      data: {
+        password: encryptedPassword,
+      },
+    });
+
+    let resp = ResponseTemplate(null, "Password reset successfully", null, 200);
+    res.json(resp);
+    return;
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { register, authUser, verify, forgotPassword, resetPassword };
