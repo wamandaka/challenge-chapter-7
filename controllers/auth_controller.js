@@ -22,7 +22,7 @@ async function register(req, res, next) {
       },
     });
 
-    let { name, email, password, age, birthdate, profile_picture } = req.body;
+    let { name, email, password, age, birthdate } = req.body;
     const formattedDate = new Date(parseISO(birthdate));
     formattedDate.setDate(formattedDate.getDate() + 1);
     const newformattedDate = formattedDate.toISOString();
@@ -47,7 +47,7 @@ async function register(req, res, next) {
         password: encriptedPassword,
         age: parseInt(age),
         birthdate: newformattedDate,
-        profile_picture: profile_picture,
+        profile_picture: "default.jpg",
         is_verified: false,
       },
     });
