@@ -59,3 +59,40 @@
       }
 
 ## Deploy in Railway
+
+### register account
+
+- [x] POST https://challenge-chapter-7-production.up.railway.app/auth/register
+      Contoh:
+      {
+      "name": "nama",
+      "email": "email@mail.com",
+      "password": "pass",
+      "birthdate": "2004-07-11",
+      "age": "19"
+      }
+
+### login
+
+- [x] POST https://challenge-chapter-7-production.up.railway.app/auth/login
+      Contoh:
+      {
+      "email": "email@mail.com",
+      "password": "pass"
+      }
+
+### forgot password
+
+- [x] POST https://challenge-chapter-7-production.up.railway.app/auth/forgotPassword
+      Contoh:
+      {
+      "email": "email@mail.com"
+      }
+
+### reset password
+
+- [x] PUT https://challenge-chapter-7-production.up.railway.app/auth/resetPassword?token=
+      Contoh:
+      {
+      "newPassword": "password"
+      }
