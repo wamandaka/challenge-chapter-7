@@ -24,7 +24,7 @@
 ### register account
 
 - [x] POST http://localhost:8080/auth/register
-      [x]Contoh:
+      - [x] Contoh:
       {
       "name": "nama",
       "email": "email@mail.com",
