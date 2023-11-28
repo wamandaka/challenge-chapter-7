@@ -36,7 +36,7 @@
 ### login
 
 - [x] POST http://localhost:8080/auth/login
-      Contoh:
+      - Contoh:
       {
       "email": "email@mail.com",
       "password": "pass"
