@@ -212,7 +212,7 @@ async function forgotPassword(req, res, next) {
       from: process.env.EMAIL_SMTP,
       to: email,
       subject: "Reset Password",
-      html: `<p>To reset your password, click on the following link:</p><a href="${resetLink}">reset link</a>`,
+      html: `<a href="${resetLink}">reset link</a>`,
     };
 
     await transporter.sendMail(mailOptions);
