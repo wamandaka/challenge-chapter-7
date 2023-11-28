@@ -205,8 +205,9 @@ async function forgotPassword(req, res, next) {
       { expiresIn: "1h" } // Token reset password berlaku selama 1 jam
     );
 
+    const baseURL = process.env.BASE_URL;
     // Kirim email reset password
-    const resetLink = `http://localhost:8080/auth/resetPassword?token=${resetToken}`;
+    const resetLink = `${baseURL}/auth/resetPassword?token=${resetToken}`;
     const mailOptions = {
       from: process.env.EMAIL_SMTP,
       to: email,
