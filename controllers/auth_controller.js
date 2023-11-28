@@ -207,7 +207,7 @@ async function forgotPassword(req, res, next) {
 
     const baseURL = process.env.BASE_URL;
     // Kirim email reset password
-    const resetLink = `${baseURL}/auth/resetPassword?token=${resetToken}`;
+    const resetLink = `https://challenge-chapter-7-production.up.railway.app/auth/resetPassword?token=${resetToken}`;
     const mailOptions = {
       from: process.env.EMAIL_SMTP,
       to: email,
