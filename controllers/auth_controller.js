@@ -65,7 +65,8 @@ async function register(req, res, next) {
       // { expiresIn: "1h" } // Opsional: Waktu kedaluwarsa token
     );
 
-    const verificationLink = `http://localhost:8080/auth/verify?token=${token}`;
+    const baseURL = process.env.BASE_URL;
+    const verificationLink = `${baseURL}/auth/verify?token=${token}`;
 
     const mailOptions = await transporter.sendMail({
       from: process.env.EMAIL_SMTP, // sender address
