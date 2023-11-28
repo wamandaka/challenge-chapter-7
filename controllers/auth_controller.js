@@ -5,9 +5,6 @@ const prisma = new PrismaClient();
 var jwt = require("jsonwebtoken");
 const { ResponseTemplate } = require("../helper/template_helper");
 const nodemailer = require("nodemailer");
-// const { format } = require("date-fns"); // Gunakan library date-fns untuk konversi tanggal
-// const parseISO = require("date-fns/parseISO");
-// const format = require("date-fns/format");
 const { format, parseISO } = require("date-fns");
 
 const transporter = nodemailer.createTransport({
@@ -24,14 +21,10 @@ const transporter = nodemailer.createTransport({
 async function register(req, res, next) {
   try {
     let { name, email, password, age, birthdate } = req.body;
-    console.log(name, email, password, age, birthdate);
+
     const formattedDate = parseISO(format(new Date(birthdate), "yyyy-MM-dd"));
     formattedDate.setDate(formattedDate.getDate() + 1);
     const newformattedDate = formattedDate.toISOString();
-    console.log(birthdate);
-    console.log(newformattedDate);
-
-    // console.log(parseISO(birthdate));
 
     let existUser = await prisma.user.findUnique({
       where: {
@@ -54,6 +47,15 @@ async function register(req, res, next) {
         birthdate: newformattedDate,
         profile_picture: "default.jpg",
         is_verified: false,
+      },
+      select: {
+        id: false,
+        name: true,
+        email: true,
+        age: true,
+        birthdate: true,
+        profile_picture: true,
+        is_verified: true,
       },
     });
     // Pengguna berhasil diautentikasi, generate token JWT
@@ -145,6 +147,15 @@ async function verify(req, res, next) {
         const updatedUser = await prisma.user.update({
           where: { email: decoded.email }, // Gunakan decoded.email untuk mendapatkan email dari token
           data: { is_verified: true },
+          select: {
+            id: false,
+            name: true,
+            email: true,
+            age: true,
+            birthdate: true,
+            profile_picture: true,
+            is_verified: true,
+          },
         });
 
         let resp = ResponseTemplate(
