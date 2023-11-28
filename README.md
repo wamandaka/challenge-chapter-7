@@ -9,10 +9,9 @@
 ## Delivery
 
 - [x] Mengimplementasikan debugging dan logging menggunakan sentry untuk mencatat error didalam
-aplikasi
+      aplikasi
 - [x] Menerapkan fitur real-time notifikasi sebagai welcome notif dan update password
 - [x] MMenerapkan mailer untuk fitur lupa password
-
 
 ## Criteria
 
@@ -23,15 +22,40 @@ aplikasi
 ## Pengujian Endpoint di postman
 
 ### register account
+
 - [x] POST http://localhost:8080/auth/register
+      Contoh:
+      {
+      "name": "nama",
+      "email": "email@mail.com",
+      "password": "pass",
+      "birthdate": "2004-07-11",
+      "age": "19"
+      }
 
 ### login
+
 - [x] POST http://localhost:8080/auth/login
+      Contoh:
+      {
+      "email": "email@mail.com",
+      "password": "pass"
+      }
 
 ### forgot password
+
 - [x] POST http://localhost:8080/auth/forgotPassword
+      Contoh:
+      {
+      "email": "email@mail.com"
+      }
 
-### forgot password
+### reset password
+
 - [x] PUT http://localhost:8080/auth/resetPassword?token=
+      Contoh:
+      {
+      "newPassword": "password"
+      }
 
 ## Deploy in Railway
