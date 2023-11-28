@@ -6,8 +6,9 @@ var jwt = require("jsonwebtoken");
 const { ResponseTemplate } = require("../helper/template_helper");
 const nodemailer = require("nodemailer");
 // const { format } = require("date-fns"); // Gunakan library date-fns untuk konversi tanggal
-const parseISO = require("date-fns/parseISO");
-const format = require("date-fns/format");
+// const parseISO = require("date-fns/parseISO");
+// const format = require("date-fns/format");
+const { format, parseISO } = require("date-fns");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -23,9 +24,12 @@ const transporter = nodemailer.createTransport({
 async function register(req, res, next) {
   try {
     let { name, email, password, age, birthdate } = req.body;
-    const formattedDate = new Date(parseISO(birthdate));
+    console.log(name, email, password, age, birthdate);
+    const formattedDate = parseISO(format(new Date(birthdate), "yyyy-MM-dd"));
     formattedDate.setDate(formattedDate.getDate() + 1);
     const newformattedDate = formattedDate.toISOString();
+    console.log(birthdate);
+    console.log(newformattedDate);
 
     // console.log(parseISO(birthdate));
 
@@ -36,6 +40,7 @@ async function register(req, res, next) {
     });
     if (existUser) {
       let resp = ResponseTemplate(null, "User already exist", null, 400);
+      // res.redirect("/auth/register");
       res.json(resp);
       return;
     }
@@ -69,6 +74,7 @@ async function register(req, res, next) {
     });
     console.log("Email sent: " + mailOptions.response);
     let resp = ResponseTemplate(user, "create successfully", null, 200);
+    // res.redirect("/auth/login");
     res.json(resp);
     return;
   } catch (error) {
@@ -115,7 +121,7 @@ async function authUser(req, res) {
     }
   } catch (error) {
     let resp = ResponseTemplate(false, "Internal Server Error", false, 500);
-    Sentry.captureException(error);
+    // Sentry.captureException(error);
     res.json(resp);
     return;
   }
